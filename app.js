@@ -58,11 +58,24 @@ async function scanPlatDariKamera() {
 
   console.log("Hasil OCR:", teks);
 
-  const cocok = teks.match(/[A-Z]{1,2}\s?\d{1,4}\s?[A-Z]{1,3}/);
+  /*
+    Format yang diterima:
+    - Plat Jakarta: B 1234 ABC
+    - Plat Bogor:   F 1234 ABC
+    - Bisa juga kebaca tanpa spasi: B1234ABC / F1234ABC
+  */
+
+  const cocok = teks.match(/\b(B|F)\s?\d{3,4}\s?[A-Z]{2,3}\b/);
 
   if (!cocok) return null;
 
-  return cocok[0].replace(/\s+/g, " ").trim();
+  let plat = cocok[0]
+    .replace(/\s+/g, "")
+    .trim();
+
+  plat = plat.replace(/^(B|F)(\d{3,4})([A-Z]{2,3})$/, "$1 $2 $3");
+
+  return plat;
 }
 
 document.getElementById("masukBtn").addEventListener("click", async () => {
@@ -71,7 +84,7 @@ document.getElementById("masukBtn").addEventListener("click", async () => {
   const plat = await scanPlatDariKamera();
 
   if (!plat) {
-    showAlert("Gagal Deteksi", "Plat nomor belum terbaca. Arahkan kamera lebih jelas.");
+    showAlert("Gagal Deteksi", "Hanya plat Jakarta (B) dan Bogor (F) yang dapat terbaca.");
     return;
   }
 
@@ -101,7 +114,7 @@ document.getElementById("keluarBtn").addEventListener("click", async () => {
   const plat = await scanPlatDariKamera();
 
   if (!plat) {
-    showAlert("Gagal Deteksi", "Plat nomor belum terbaca. Arahkan kamera lebih jelas.");
+    showAlert("Gagal Deteksi", "Hanya plat Jakarta (B) dan Bogor (F) yang dapat terbaca.");
     return;
   }
 
