@@ -6,20 +6,30 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const video = document.getElementById("video");
 const platNomor = document.getElementById("platNomor");
 
+function showAlert(title, message) {
+  document.getElementById("alertTitle").innerText = title;
+  document.getElementById("alertMessage").innerText = message;
+  document.getElementById("customAlert").style.display = "flex";
+}
+
+function closeAlert() {
+  document.getElementById("customAlert").style.display = "none";
+}
+
 async function startCamera() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-  video: {
-    facingMode: "environment",
-    width: { ideal: 640 },
-    height: { ideal: 480 }
-    },
-    audio: false
-});
+      video: {
+        facingMode: "environment",
+        width: { ideal: 640 },
+        height: { ideal: 480 }
+      },
+      audio: false
+    });
 
     video.srcObject = stream;
   } catch (error) {
-    alert("Kamera gagal dibuka");
+    showAlert("Kamera Gagal", "Kamera gagal dibuka. Izinkan akses kamera terlebih dahulu.");
     console.log(error);
   }
 }
@@ -56,10 +66,12 @@ async function scanPlatDariKamera() {
 }
 
 document.getElementById("masukBtn").addEventListener("click", async () => {
+  showAlert("Memindai Plat", "Sedang membaca plat nomor, tunggu sebentar...");
+
   const plat = await scanPlatDariKamera();
 
   if (!plat) {
-    alert("Plat nomor belum terbaca. Arahkan kamera lebih jelas.");
+    showAlert("Gagal Deteksi", "Plat nomor belum terbaca. Arahkan kamera lebih jelas.");
     return;
   }
 
@@ -75,19 +87,21 @@ document.getElementById("masukBtn").addEventListener("click", async () => {
     ]);
 
   if (error) {
-    alert("Gagal simpan kendaraan masuk");
+    showAlert("Gagal Simpan", "Data kendaraan masuk gagal disimpan.");
     console.log(error);
     return;
   }
 
-  alert("Kendaraan masuk berhasil disimpan: " + plat);
+  showAlert("Berhasil", "Kendaraan masuk berhasil disimpan: " + plat);
 });
 
 document.getElementById("keluarBtn").addEventListener("click", async () => {
+  showAlert("Memindai Plat", "Sedang membaca plat nomor, tunggu sebentar...");
+
   const plat = await scanPlatDariKamera();
 
   if (!plat) {
-    alert("Plat nomor belum terbaca. Arahkan kamera lebih jelas.");
+    showAlert("Gagal Deteksi", "Plat nomor belum terbaca. Arahkan kamera lebih jelas.");
     return;
   }
 
@@ -102,13 +116,13 @@ document.getElementById("keluarBtn").addEventListener("click", async () => {
     .limit(1);
 
   if (cariError) {
-    alert("Gagal mencari data kendaraan");
+    showAlert("Gagal Mencari", "Data kendaraan gagal dicari.");
     console.log(cariError);
     return;
   }
 
   if (data.length === 0) {
-    alert("Kendaraan dengan plat ini belum tercatat masuk");
+    showAlert("Tidak Ditemukan", "Kendaraan dengan plat ini belum tercatat masuk.");
     return;
   }
 
@@ -135,10 +149,10 @@ document.getElementById("keluarBtn").addEventListener("click", async () => {
     .eq("id", kendaraan.id);
 
   if (updateError) {
-    alert("Gagal update kendaraan keluar");
+    showAlert("Gagal Update", "Data kendaraan keluar gagal diupdate.");
     console.log(updateError);
     return;
   }
 
-  alert(`Kendaraan keluar berhasil. Durasi parkir: ${durasi}`);
+  showAlert("Berhasil", `Kendaraan keluar berhasil. Durasi parkir: ${durasi}`);
 });

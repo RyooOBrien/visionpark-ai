@@ -13,10 +13,9 @@
 <body>
 
   <div class="container">
-
     <div class="card">
 
-      <h1> VisionPark AI</h1>
+      <h1>VisionPark AI</h1>
 
       <p class="subtitle">
         Smart Parking System with License Plate Detection
@@ -25,29 +24,24 @@
       <video id="video" autoplay playsinline></video>
 
       <div class="button-group">
-
-        <button id="masukBtn">
-          Kendaraan Masuk
-        </button>
-
-        <button id="keluarBtn">
-          Kendaraan Keluar
-        </button>
-
+        <button id="masukBtn">Kendaraan Masuk</button>
+        <button id="keluarBtn">Kendaraan Keluar</button>
       </div>
 
       <div class="result">
-
         <h2>Hasil Deteksi</h2>
-
-        <p id="platNomor">
-          Belum ada kendaraan
-        </p>
-
+        <p id="platNomor">Belum ada kendaraan</p>
       </div>
 
     </div>
+  </div>
 
+  <div id="customAlert" class="custom-alert">
+    <div class="alert-box">
+      <h3 id="alertTitle">Info</h3>
+      <p id="alertMessage">Pesan</p>
+      <button onclick="closeAlert()">Oke</button>
+    </div>
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
