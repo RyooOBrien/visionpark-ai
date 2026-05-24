@@ -84,7 +84,7 @@ document.getElementById("masukBtn").addEventListener("click", async () => {
   const plat = await scanPlatDariKamera();
 
   if (!plat) {
-    showAlert("Gagal Deteksi", "Hanya plat Jakarta (B) dan Bogor (F) yang dapat terbaca.");
+    showAlert("Scan Gagal", "Sistem tidak dapat mengenali plat nomor. Pastikan pencahayaan cukup dan kamera fokus.");
     return;
   }
 
