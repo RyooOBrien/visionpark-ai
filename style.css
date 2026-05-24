@@ -2,68 +2,65 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
 }
 
 body {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #020617, #0f172a, #1e293b);
+  background: #0f172a;
+  font-family: Arial, sans-serif;
   color: white;
-}
-
-.container {
   min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   padding: 20px;
 }
 
-.card {
+.container {
   width: 100%;
-  max-width: 430px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 28px;
-  padding: 24px;
-  text-align: center;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.35);
-  backdrop-filter: blur(18px);
+  max-width: 500px;
+}
+
+.card {
+  background: #111827;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 h1 {
-  font-size: 32px;
-  margin-bottom: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 28px;
 }
 
-.subtitle {
-  color: #cbd5e1;
-  font-size: 14px;
-  margin-bottom: 22px;
+.video-container {
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  background: black;
 }
 
 video {
   width: 100%;
-  height: 280px;
-  object-fit: cover;
-  border-radius: 22px;
-  background: black;
-  margin-bottom: 20px;
+  height: auto;
+  display: block;
 }
 
 .button-group {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
   gap: 12px;
+  margin-top: 20px;
 }
 
 button {
+  flex: 1;
   border: none;
-  padding: 15px;
-  border-radius: 18px;
+  padding: 14px;
+  border-radius: 16px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 #masukBtn {
@@ -76,20 +73,45 @@ button {
   color: white;
 }
 
+button:hover {
+  transform: scale(1.03);
+}
+
 .result {
-  margin-top: 22px;
-  padding: 18px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 20px;
+  margin-top: 20px;
+  background: #1e293b;
+  padding: 16px;
+  border-radius: 16px;
+  text-align: center;
 }
 
 .result h2 {
-  font-size: 18px;
   margin-bottom: 10px;
+  font-size: 20px;
 }
 
 #platNomor {
   font-size: 24px;
   font-weight: bold;
   color: #38bdf8;
+  word-break: break-word;
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 22px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  #platNomor {
+    font-size: 20px;
+  }
+
+  .card {
+    padding: 16px;
+  }
 }

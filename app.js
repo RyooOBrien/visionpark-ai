@@ -9,9 +9,13 @@ const platNomor = document.getElementById("platNomor");
 async function startCamera() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment" },
-      audio: false
-    });
+  video: {
+    facingMode: "environment",
+    width: { ideal: 640 },
+    height: { ideal: 480 }
+    },
+    audio: false
+});
 
     video.srcObject = stream;
   } catch (error) {
