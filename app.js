@@ -52,28 +52,39 @@ async function scanPlatDariKamera() {
   let teks = hasil.data.text.toUpperCase();
 
   teks = teks
-    .replace(/[^A-Z0-9\s]/g, "")
+    .replace(/[^A-Z0-9\s]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 
-  console.log("Hasil OCR:", teks);
+  console.log("Hasil OCR asli:", teks);
 
-  /*
-    Format yang diterima:
-    - Plat Jakarta: B 1234 ABC
-    - Plat Bogor:   F 1234 ABC
-    - Bisa juga kebaca tanpa spasi: B1234ABC / F1234ABC
-  */
+  // Gabungkan semua supaya B 1234 ABC / B1234ABC tetap bisa kebaca
+  let clean = teks.replace(/\s+/g, "");
 
-  const cocok = teks.match(/\b(B|F)\s?\d{3,4}\s?[A-Z]{2,3}\b/);
+  // Perbaikan OCR umum
+  clean = clean
+    .replace(/^8/, "B")
+    .replace(/^6/, "B")
+    .replace(/O/g, "0")
+    .replace(/I/g, "1");
 
-  if (!cocok) return null;
+  console.log("Hasil OCR clean:", clean);
 
-  let plat = cocok[0]
-    .replace(/\s+/g, "")
-    .trim();
+  const cocok = clean.match(/(B|F)\d{1,4}[A-Z]{1,3}/);
 
-  plat = plat.replace(/^(B|F)(\d{3,4})([A-Z]{2,3})$/, "$1 $2 $3");
+  if (!cocok) {
+    return null;
+  }
+
+  let platRaw = cocok[0];
+
+  const pecah = platRaw.match(/^(B|F)(\d{1,4})([A-Z]{1,3})$/);
+
+  if (!pecah) {
+    return null;
+  }
+
+  const plat = `${pecah[1]} ${pecah[2]} ${pecah[3]}`;
 
   return plat;
 }
