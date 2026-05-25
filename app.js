@@ -43,50 +43,62 @@ async function scanPlatDariKamera() {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
 
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  // Crop area tengah, jadi OCR fokus ke plat
+  const cropX = video.videoWidth * 0.1;
+  const cropY = video.videoHeight * 0.35;
+  const cropW = video.videoWidth * 0.8;
+  const cropH = video.videoHeight * 0.3;
+
+  context.drawImage(
+    video,
+    cropX, cropY, cropW, cropH,
+    0, 0, canvas.width, canvas.height
+  );
+
+  // Preprocessing hitam putih
+  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const gray = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
+    const value = gray > 120 ? 255 : 0;
+
+    data[i] = value;
+    data[i + 1] = value;
+    data[i + 2] = value;
+  }
+
+  context.putImageData(imageData, 0, 0);
 
   const hasil = await Tesseract.recognize(canvas, "eng", {
-    logger: m => console.log(m)
+    logger: m => console.log(m),
+    tessedit_char_whitelist: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+    tessedit_pageseg_mode: "7"
   });
 
   let teks = hasil.data.text.toUpperCase();
 
   teks = teks
-    .replace(/[^A-Z0-9\s]/g, " ")
-    .replace(/\s+/g, " ")
+    .replace(/[^A-Z0-9]/g, "")
     .trim();
 
-  console.log("Hasil OCR asli:", teks);
+  console.log("Hasil OCR:", teks);
 
-  // Gabungkan semua supaya B 1234 ABC / B1234ABC tetap bisa kebaca
-  let clean = teks.replace(/\s+/g, "");
-
-  // Perbaikan OCR umum
-  clean = clean
+  teks = teks
     .replace(/^8/, "B")
     .replace(/^6/, "B")
     .replace(/O/g, "0")
     .replace(/I/g, "1");
 
-  console.log("Hasil OCR clean:", clean);
+  const cocok = teks.match(/(B|F)\d{1,4}[A-Z]{1,3}/);
 
-  const cocok = clean.match(/(B|F)\d{1,4}[A-Z]{1,3}/);
+  if (!cocok) return null;
 
-  if (!cocok) {
-    return null;
-  }
+  const pecah = cocok[0].match(/^(B|F)(\d{1,4})([A-Z]{1,3})$/);
 
-  let platRaw = cocok[0];
+  if (!pecah) return null;
 
-  const pecah = platRaw.match(/^(B|F)(\d{1,4})([A-Z]{1,3})$/);
-
-  if (!pecah) {
-    return null;
-  }
-
-  const plat = `${pecah[1]} ${pecah[2]} ${pecah[3]}`;
-
-  return plat;
+  return `${pecah[1]} ${pecah[2]} ${pecah[3]}`;
 }
 
 document.getElementById("masukBtn").addEventListener("click", async () => {
